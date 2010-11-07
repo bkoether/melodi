@@ -1,0 +1,75 @@
+html,
+body,
+p{
+	font: 7pt "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+#branding,
+#footer,
+div.views-hide ul.links{
+	display: none;
+}
+caption{
+	font-weight: bold;
+}
+
+
+table.army--navy caption{
+	color: brown;
+}
+table.army--navy,
+table.army--navy thead,
+table.army--navy thead tr,
+table.army--navy tr{
+	border-color: brown;
+}
+
+table.walmart caption{
+	color: blue;
+}
+table.walmart,
+table.walmart thead,
+table.walmart thead tr,
+table.walmart tr{
+	border-color: blue;
+}
+
+table.superstore caption{
+	color: green;
+}
+table.superstore,
+table.superstore thead,
+table.superstore thead tr,
+table.superstore tr{
+	border-color: green;
+}
+
+table.zellers caption{
+	color: orange;
+}
+table.zellers,
+table.zellers thead,
+table.zellers thead tr,
+table.zellers tr{
+	border-color: orange;
+}
+
+table.rexall caption{
+	color: yellow;
+}
+table.rexall,
+table.rexall thead,
+table.rexall thead tr,
+table.rexall tr{
+	border-color: yellow;
+}
+
+
+table.shoppers-drugmart caption{
+	color: red;
+}
+table.shoppers-drugmart,
+table.shoppers-drugmart thead,
+table.shoppers-drugmart thead tr,
+table.shoppers-drugmart tr{
+	border-color: red;
+}

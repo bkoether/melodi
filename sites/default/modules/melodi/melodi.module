@@ -136,8 +136,8 @@ function melodi_po_finder($form_state){
   return $form;
 }
 function melodi_po_finder_submit($form, &$form_state){
-  $nid = db_result(db_query('SELECT nid FROM {node} WHERE LOWER(title) = LOWER("%s") AND type = "%s"', $form_state['values']['po'], 'orders'));
-  print $nid;
+  $nid = db_result(db_query('SELECT nid FROM {node} WHERE LOWER(title) = LOWER("%s") AND type = "%s"', $form_state['values']['po'], 'order'));
+  // print $nid;
   drupal_goto('node/'.$nid);
 }
 
@@ -148,4 +148,40 @@ function melodi_init() {
   drupal_add_js(drupal_get_path('module', 'melodi') . "/melodi.js");
 }
 
+function melodi_form_alter(&$form, &$form_state, $form_id) {
+  // ifviews-exposed-form-stats-page-1
+  // print $form_id.'--';
+  if($form_id =='views_exposed_form' && $form_state['view']->name == 'stats'){
+    // dprint_r($form);
+    unset($form['date_filter']['#theme']);
+    $res = db_query('SELECT nid, title FROM {node} WHERE status = %d AND type = "%s" ORDER BY title ASC', 1, 'store');
+    $stores = array('' => t('<Any>'));
+    while($store = db_fetch_object($res)){
+      $stores[$store->nid] = $store->title;
+    }
+    unset($form['nid']);
+    $form['nid'] = array(
+      '#type' => 'select',
+      '#options' => $stores,
+      '#default_value' => -1,
+    );
+    
 
+    // dprint_r($form);
+  }
+  // dprint_r($form);
+  if($form['#node']->type == 'order' && !isset($form['#node']->nid)){
+    $form['buttons']['save_cont'] = array(
+      '#type' => 'submit',
+      '#value' => t('Save & Continue'),
+      '#submit' => array('node_form_submit', 'melodi_check_redirect'),
+    );    
+  }
+}
+
+function melodi_check_redirect($form, &$form_state){
+  // if($form_state['values']['op'] == "Save & Continue"){
+  //   $form_state['redirect'] = 'node/add/order';
+  // }
+  drupal_goto('node/add/order');
+}

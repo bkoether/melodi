@@ -516,6 +516,72 @@ div.node .column-side .column-wrapper {
 	font-size: 13px;
 }
 
+#views-exposed-form-stats-page-1 .views-widget .container-inline-date{
+	width: 165px;
+	float: left;
+	clear: none;
+}
+#views-exposed-form-stats-page-1 .views-widget .container-inline-date .form-item{
+	padding: 0;
+}
+#views-exposed-form-stats-page-1 .views-widget .container-inline-date .form-item div{
+	display: inline;
+}
+
+#home-table,
+#home-table tr,
+#home-table td{
+	border: none;
+}
+#home-table a{
+	margin: 5px;
+	text-align: center;
+	padding: 5px 10px;
+	border-width: 1px;
+	border-style: solid;
+	color: #333;
+	background: #F4F4F4 url(images/bleeds.png) repeat-x 0px -41px;
+	border-color: #DDD #DDD #CCC;
+	display: block;
+	-moz-box-shadow:#ddd 0px 1px 1px;
+  	-webkit-box-shadow:#ddd 0px 1px 1px;
+  	-moz-border-radius:3px;
+  	-webkit-border-radius:3px;
+  	font: normal normal normal 13px/20px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  	text-transform: uppercase;
+}
+#home-table a:hover{
+	border-color:#999 #999 #888;
+    background:#888 url(images/bleeds.png) 0px 0px repeat-x;
+    color:#fff;
+}
+
+#block-melodi-1 .block-title{
+	font-size: 11px;
+}
+
+#melodi-po-finder #edit-po-wrapper{
+	display: inline;
+}
+#melodi-po-finder #edit-po{
+	width: 80%;
+}
+
+.view-master-list td{
+	width: 9%;
+}
+.view-master-list .views-field-field-store-phone-value{
+	width: 10%;
+}
+.view-master-list .views-field-field-store-address-value{
+	width: 20%;
+}
+.view-master-list .views-field-field-store-contact-value{
+	width: 11%;
+}
+.view-master-list .views-field-field-store-notes-value{
+	width: 14%;
+}
 /* @end */
   
 

@@ -6,9 +6,10 @@ core = "6.x"
 engine = "phptemplate"
 
 scripts[] = "js/rubik.js"
-stylesheets[screen][] = "core.css"
-stylesheets[screen][] = "icons.css"
-stylesheets[screen][] = "style.css"
+stylesheets[all][] = "core.css"
+stylesheets[all][] = "icons.css"
+stylesheets[all][] = "style.css"
+stylesheets[print][] = "print.css"
 
 ; Information added by drupal.org packaging script on 2010-09-28
 version = "6.x-3.0-beta1"
