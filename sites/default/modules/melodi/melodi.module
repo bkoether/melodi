@@ -1,0 +1,151 @@
+<?php
+
+/**
+ * Implementation of hook_menu().
+ */
+function melodi_menu() {
+  $items = array();
+
+  $items['melodi/autocomplete'] = array(
+    'title' => 'PO autocomplete',
+    'page callback' => 'melodi_autocomplete',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function melodi_autocomplete($string = '') {
+  $matches = array();
+  if ($string) {
+    $result = db_query_range("SELECT nid, title FROM {node} WHERE LOWER(title) LIKE LOWER('%s%%') AND type = 'order'", $string, 0, 10);
+    while ($node = db_fetch_object($result)) {
+      $matches[$node->title] = check_plain($node->title);
+    }
+  }
+  drupal_json($matches);
+}
+
+/**
+ * $sid: Store NID
+ * $type: date/amount
+ */
+function melodi_last_order($sid, $type = 'date'){
+  $sql = 'SELECT d.field_date_value, o.field_sent_amount_value FROM {node} n 
+  LEFT JOIN {content_field_store_ref} c on n.nid = c.nid
+  LEFT JOIN {content_field_date} d on d.nid = c.nid
+  LEFT JOIN {content_type_order} o on n.nid = o.nid
+  WHERE c.field_store_ref_nid = %d AND n.type = "%s"
+  ORDER BY d.field_date_value DESC
+  LIMIT 1';
+  $result = db_query($sql, $sid, 'order');
+  $order = db_fetch_object($result);
+  
+  if($type == 'amount'){
+    return $order->field_sent_amount_value;
+  } else {
+    return $order->field_date_value;
+  }
+  
+}
+
+function melodi_next_call($sid, $type, $cycle){
+  $sql = 'SELECT d.field_date_value  FROM {node} n 
+  LEFT JOIN {content_field_store_ref} c on n.nid = c.nid
+  LEFT JOIN {content_field_date} d on d.nid = c.nid 
+  WHERE c.field_store_ref_nid = %d AND n.type = "%s"
+  ORDER BY d.field_date_value DESC
+  LIMIT 1';
+  $date = db_result(db_query($sql, $sid, $type));
+  return $date + (604800 * $cycle);
+}
+
+
+/**
+ * Implementation of hook_block().
+ */
+function melodi_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+
+    case 'list':
+      $blocks[0]['info'] = t('Last Activity');
+      $blocks[1]['info'] = t('PO Finder');
+      return $blocks;
+
+    // case 'configure':
+    //   if ($delta == 0 && user_access('administer module')) {
+    //     $form['module_block_1'] = array();
+    //   }
+    //   if ($delta == 1 && user_access('administer module')) {
+    //     $form['module_block_2'] = array();
+    //   }
+    //   return $form;
+    // 
+    // case 'save':
+    //   if ($delta == 0) {
+    //     variable_set('module_block_setting_1', $edit['module_block_1']);
+    //   }
+    //   if ($delta == 1) {
+    //     variable_set('module_block_setting_2', $edit['module_block_2']);
+    //   }
+    //   break;
+
+    case 'view':
+      if ($delta == 0) {
+        $block['subject'] = t('Last Activity');
+        $block['content'] = melodi_last_activity();
+      }
+      if ($delta == 1) {
+        $block['subject'] = t('PO Finder');
+        $block['content'] = drupal_get_form('melodi_po_finder');
+      }
+
+      return $block;
+  }    
+}
+
+function melodi_last_activity(){
+  $out = '';
+  if(arg(0) == 'node' && is_numeric(arg(1))){
+    $node = node_load(arg(1));
+    $next = melodi_next_call($node->nid, $node->field_cc_depends[0]['value'], $node->field_call_cycle[0]['value']);
+    $next_format = format_date($next);
+    if($next < time()){
+      $next_format = '<span class="due">' . $next_format . '</span>';
+    }
+    $out .= '<strong>Next Call:</strong> ' . $next_format . '<br/>';
+    $out .= '<strong>Last Order:</strong> $' . number_format(melodi_last_order($node->nid, 'amount'), 2) . '<br/>';
+    $out .= '<strong>Order Date:</strong> ' . format_date(melodi_last_order($node->nid));
+  }
+  return $out;
+}
+
+function melodi_po_finder($form_state){
+  $form = array();
+  $form['po'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('PO #'), 
+    '#maxlength' => 60, 
+    '#autocomplete_path' => 'melodi/autocomplete', 
+  );
+  $form['go'] = array(
+    '#type' => 'submit',
+    '#value' => t('Go'),
+  );
+    
+  return $form;
+}
+function melodi_po_finder_submit($form, &$form_state){
+  $nid = db_result(db_query('SELECT nid FROM {node} WHERE LOWER(title) = LOWER("%s") AND type = "%s"', $form_state['values']['po'], 'orders'));
+  print $nid;
+  drupal_goto('node/'.$nid);
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function melodi_init() {
+  drupal_add_js(drupal_get_path('module', 'melodi') . "/melodi.js");
+}
+
+

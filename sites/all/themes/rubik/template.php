@@ -304,6 +304,11 @@ function rubik_preprocess_help_page(&$vars) {
  * Preprocessor for theme('node').
  */
 function rubik_preprocess_node(&$vars) {
+  if(isset($vars['taxonomy']) && $vars['node']->type == 'store'){
+    $chain = current($vars['taxonomy']);
+    $new_title = 'Store #' . $vars['node']->title . ' (' . $chain['title'] . ')';
+    drupal_set_title($new_title);
+  }
   $vars['layout'] = TRUE;
   $vars['title'] = menu_get_object() === $vars['node'] ? '' : $vars['title'];
   $vars['attr']['class'] .= ' clear-block';
@@ -314,6 +319,8 @@ function rubik_preprocess_node(&$vars) {
   if (in_array($theme_key, array('rubik', 'cube'), TRUE)) {
     $vars['template_files'] = array();
   }
+  // dprint_r($vars);
+  $vars['right_column'] = theme('blocks', 'right');
 }
 
 /**

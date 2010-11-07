@@ -3,18 +3,17 @@
 <?php if (!empty($pre_object)) print $pre_object ?>
 
 <div <?php if (!empty($attr)) print drupal_attributes($attr) ?>>
-  <?php if ($layout && (!empty($submitted) || !empty($links))): ?>
+  <?php if ($layout && (!empty($submitted) || !empty($links) || !empty($right_column))): ?>
     <div class='column-side'><div class='column-wrapper'>
   <?php endif; ?>
-
-  <?php if (!empty($submitted)): ?>
-    <div class='<?php print $hook ?>-submitted clear-block'><?php print $submitted ?></div>
-  <?php endif; ?>
+  
+  <?php print $right_column; ?>
+  
   <?php if (!empty($links)): ?>
     <div class='<?php print $hook ?>-links clear-block'><?php print $links ?></div>
   <?php endif; ?>
 
-  <?php if ($layout && (!empty($submitted) || !empty($links))): ?>
+  <?php if ($layout && (!empty($submitted) || !empty($links) || !empty($right_column))): ?>
     </div></div>
   <?php endif; ?>
 
